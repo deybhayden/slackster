@@ -1,6 +1,12 @@
 """
 Base file containing tools for building and composing Slackster commands.
 """
+import os
+
+
+def check_org_email_domain(email):
+    domain = os.environ.get("ORG_EMAIL_DOMAIN")
+    return email.endswith(domain)
 
 
 class SlacksterCommand:
@@ -28,11 +34,23 @@ class SlacksterCommand:
         for user in first_roster:
             if user not in second_roster:
                 user_info = self.client.get_user_info(user)["user"]
-                formatted_user = (
-                    (user_info["profile"]["display_name"] or user_info["real_name"])
-                    + " (@"
-                    + user_info["name"]
-                    + ")"
+                should_print_user = all(
+                    [
+                        not user_info["is_bot"],
+                        not user_info["is_app_user"],
+                        not user_info["deleted"],
+                        check_org_email_domain(user_info["profile"]["email"]),
+                    ]
                 )
 
-                print(formatted_user)
+                if should_print_user:
+                    formatted_user = (
+                        "@"
+                        + (
+                            user_info["profile"]["display_name"]
+                            or user_info["real_name"]
+                        )
+                        + (" *" if user_info["is_restricted"] else "")
+                    )
+
+                    print(formatted_user)

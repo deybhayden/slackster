@@ -5,18 +5,15 @@ CLI tool to print Slack stats and metrics.
 
 import argparse
 
-from slackster.client import get_web_client, get_conversation_roster
+from slackster.client import SlacksterClient
+from slackster.commands import SlacksterCommand
 
 
 def main(args):
     """Main entrypoint for Slackster slack commands"""
-    client = get_web_client()
-
-    first_roster = get_conversation_roster(client, args.first_conversation_id)
-    second_roster = get_conversation_roster(client, args.second_conversation_id)
-    print(first_roster)
-    print()
-    print(second_roster)
+    client = SlacksterClient()
+    command = SlacksterCommand(client, args)
+    command.run()
 
 
 if __name__ == "__main__":
@@ -31,9 +28,7 @@ if __name__ == "__main__":
         dest="command",
     )
     diff = subparser.add_parser(
-        "diff",
-        aliases=["d"],
-        description="Run a diff between two Slack conversation rosters.",
+        "diff", aliases=["d"], description="Print members in C1, but not in C2."
     )
     diff.add_argument(
         "first_conversation_id",

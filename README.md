@@ -13,10 +13,17 @@ $ pipenv install --dev
 
 ## Usage
 
+You'll need a Slack [User token](https://api.slack.com/authentication/token-types#user) from an installed Slack app. Full permission set required to run all utilities are as follows:
+
+* `channels:read`
+* `channels:write`
+* `users:read`
+* `users:read.email`
+
 Set your slack token in a `.env` file in thee root directory.
 
 ```bash
-SLACK_TOKEN=xoxo-1111
+SLACK_TOKEN=xoxp-1111
 ```
 
 You can then run `slackster` inside a pipenv shell.

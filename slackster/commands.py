@@ -28,6 +28,8 @@ class SlacksterCommand:
             self.perform_diff()
         elif self.name == "archive":
             self.perform_archive()
+        elif self.name == "prefix":
+            self.perform_prefix_search()
 
     def perform_diff(self):
         """
@@ -82,3 +84,18 @@ class SlacksterCommand:
                     print("Channel archived.")
                 else:
                     print("Channel saved!")
+
+    def perform_prefix_search(self):
+        """
+        Print channels with passed prefix string.
+        """
+        channels = self.client.get_conversation_list()
+        results = []
+
+        for channel in channels:
+            if channel["name"].startswith(self.arguments.prefix):
+                results.append((channel["num_members"], channel["name"]))
+
+        print("Search results (most members first):\n")
+        for (count, name) in sorted(results, key=lambda x: x[0], reverse=True):
+            print("#{} with {} members".format(name, count))

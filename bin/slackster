@@ -49,4 +49,10 @@ if __name__ == "__main__":
         help="Upper member limit used to archive channels.",
         type=int,
     )
+    prefix = subparser.add_parser(
+        "prefix", aliases=["p"], description="Show all channels with passed prefix."
+    )
+    prefix.add_argument(
+        "prefix", metavar="P", help="The prefix used to filter channels."
+    )
     main(parser.parse_args())

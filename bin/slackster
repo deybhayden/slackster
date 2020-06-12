@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-CLI tool to print Slack stats and metrics.
+CLI tool for Slack stats, metrics & utilities.
 """
 
 import argparse
@@ -18,11 +18,11 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Slackster can run a few different metrics and analytics on a Slack workspace."
+        description="Slackster can run a few different commands on a Slack workspace."
     )
     subparser = parser.add_subparsers(
         title="subcommands",
-        description="Set of Slack analytics available",
+        description="Set of Slack utilities available",
         required=True,
         help="Add -h after a subcommand for more information",
         dest="command",
@@ -39,5 +39,14 @@ if __name__ == "__main__":
         "second_conversation_id",
         metavar="C2",
         help="Second conversation ID required to perform the roster diff.",
+    )
+    archive = subparser.add_parser(
+        "archive", aliases=["a"], description="Archive conversations with <= N members"
+    )
+    archive.add_argument(
+        "number",
+        metavar="N",
+        help="Upper member limit used to archive channels.",
+        type=int,
     )
     main(parser.parse_args())

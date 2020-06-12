@@ -5,6 +5,9 @@ import os
 
 
 def check_org_email_domain(email):
+    """
+    Check passed email against ORG_EMAIL_DOMAIN for full organization members.
+    """
     domain = os.environ.get("ORG_EMAIL_DOMAIN")
     return email.endswith(domain)
 
@@ -17,18 +20,25 @@ class SlacksterCommand:
     def __init__(self, client, arguments):
         self.client = client
         self.name = arguments.command
-        self.first_conversation_id = arguments.first_conversation_id
-        self.second_conversation_id = arguments.second_conversation_id
+        self.arguments = arguments
 
     def run(self):
         """Perform command built from Slack CLI tool"""
         if self.name == "diff":
             self.perform_diff()
+        elif self.name == "archive":
+            self.perform_archive()
 
     def perform_diff(self):
-        first_roster = self.client.get_conversation_members(self.first_conversation_id)
+        """
+        Print out members of first_conversation_id that aren't
+        in the second_conversation_id.
+        """
+        first_roster = self.client.get_conversation_members(
+            self.arguments.first_conversation_id
+        )
         second_roster = self.client.get_conversation_members(
-            self.second_conversation_id
+            self.arguments.second_conversation_id
         )
 
         for user in first_roster:
@@ -54,3 +64,21 @@ class SlacksterCommand:
                     )
 
                     print(formatted_user)
+
+    def perform_archive(self):
+        """
+        Archive channels with less than arguments.number of members upon confirmation.
+        """
+        channels = self.client.get_conversation_list()
+
+        for channel in channels:
+            if channel["num_members"] <= self.arguments.number:
+                msg = "Going to archive {} ({} members). Type 'Yes' to continue. ".format(
+                    channel["name"], channel["num_members"]
+                )
+                confirm = input(msg)
+                if confirm.lower() == "yes":
+                    self.client.archive_conversation(channel["id"])
+                    print("Channel archived.")
+                else:
+                    print("Channel saved!")

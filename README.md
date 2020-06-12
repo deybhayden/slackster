@@ -1,6 +1,6 @@
 # slackster
 
-Slack stats and metrics with Python.
+Collection of Slack utilities with Python.
 
 ## Development
 

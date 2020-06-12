@@ -23,6 +23,12 @@ class SlacksterClient:
 
         self.web_client = WebClient(token=token)
 
+    def archive_conversation(self, conversation_id):
+        """
+        Archive the passed conversation id.
+        """
+        return self.web_client.conversations_archive(channel=conversation_id)
+
     def get_conversation_info(self, conversation_id):
         """
         Get basic information from the conversation (public/private/group) id.
@@ -30,6 +36,23 @@ class SlacksterClient:
         return self.web_client.conversations_info(
             channel=conversation_id, include_num_members=1
         )
+
+    def get_conversation_list(self):
+        """
+        Get list of public channels in the workspace.
+        """
+        response = self.web_client.conversations_list(exclude_archived=True)
+        channels = response["channels"]
+        cursor = response["response_metadata"].get("next_cursor")
+
+        while cursor:
+            response = self.web_client.conversations_list(
+                exclude_archived=True, cursor=cursor
+            )
+            channels.extend(response["channels"])
+            cursor = response["response_metadata"].get("next_cursor")
+
+        return channels
 
     def get_conversation_members(self, conversation_id):
         """

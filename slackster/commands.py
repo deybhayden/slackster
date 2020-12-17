@@ -24,12 +24,14 @@ class SlacksterCommand:
 
     def run(self):
         """Perform command built from Slack CLI tool"""
-        if self.name == "diff":
+        if self.name in ("d", "diff"):
             self.perform_diff()
-        elif self.name == "archive":
+        elif self.name in ("a", "archive"):
             self.perform_archive()
-        elif self.name == "prefix":
+        elif self.name in ("p", "prefix"):
             self.perform_prefix_search()
+        elif self.name in ("x", "export"):
+            self.perform_export_conversations()
 
     def perform_diff(self):
         """
@@ -75,8 +77,10 @@ class SlacksterCommand:
 
         for channel in channels:
             if channel["num_members"] <= self.arguments.number:
-                msg = "Going to archive {} ({} members). Type 'Yes' to continue. ".format(
-                    channel["name"], channel["num_members"]
+                msg = (
+                    "Going to archive {} ({} members). Type 'Yes' to continue. ".format(
+                        channel["name"], channel["num_members"]
+                    )
                 )
                 confirm = input(msg)
                 if confirm.lower() == "yes":
@@ -87,7 +91,7 @@ class SlacksterCommand:
 
     def perform_prefix_search(self):
         """
-        Print channels with passed prefix string.
+        Print channels with passed prefix string (channels with most members first).
         """
         channels = self.client.get_conversation_list()
         results = []
@@ -99,3 +103,16 @@ class SlacksterCommand:
         print("Search results (most members first):\n")
         for (count, name) in sorted(results, key=lambda x: x[0], reverse=True):
             print("#{} with {} members".format(name, count))
+
+    def perform_export_conversations(self):
+        """
+        Print channels in alphabetical order.
+        """
+        channels = self.client.get_conversation_list()
+        results = []
+
+        for channel in channels:
+            results.append(channel["name"])
+
+        for name in sorted(results):
+            print(f"#{name}")

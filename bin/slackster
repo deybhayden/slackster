@@ -55,4 +55,7 @@ if __name__ == "__main__":
     prefix.add_argument(
         "prefix", metavar="P", help="The prefix used to filter channels."
     )
+    subparser.add_parser(
+        "export", aliases=["x"], description="Show all channels in alphabetical order."
+    )
     main(parser.parse_args())

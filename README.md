@@ -30,5 +30,6 @@ You can then run `slackster` inside a pipenv shell.
 
 ```bash
 $ pipenv shell
+$ pip install -e .
 $ slackster diff C12345678 C90123456
 ```

@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-slackster-deybhayden = {editable = true, path = "."}
+slackster-deybhayden = { editable = true, path = "." }
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
